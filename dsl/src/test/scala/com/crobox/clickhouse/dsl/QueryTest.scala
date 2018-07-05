@@ -111,14 +111,13 @@ class QueryTest extends ClickhouseClientSpec with TestSchema {
   }
 
   it should "properly tokenize conditional comparison statements with regular columns" in {
-    val query = select(shieldId) from OneTestTable where ((shieldId.isEq(0) and col1 >= 1) >= 1)
+    val query = select(shieldId) from OneTestTable where (col1.isEq("") and col2 >= 1) >= true
     val generatedSql = clickhouseTokenizer.toSql(query.internalQuery)
 
     generatedSql should be (
-      s"SELECT shield_id FROM $tokenizerDatabase.captainAmerica "
+      s"SELECT shield_id FROM $tokenizerDatabase.captainAmerica WHERE (column_1 = '' AND column_2 >= 1) >= 1"
     )
   }
-
 
   it should "perform the union of multiple tables" in {
     val query = select(shieldId) from OneTestTable
